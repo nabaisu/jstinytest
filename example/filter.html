@@ -1,0 +1,73 @@
+<script src="../tinytest.js"></script>
+<script src="adder.js"></script>
+<script>
+  function filter(array, callback, thisConfObj) {
+    var confCallback = callback;
+    if (thisConfObj) {
+      confCallback = callback.bind(thisConfObj);
+    }
+    resultingArray = []
+    for (var i = 0; i < array.length; i++) {
+      if (confCallback(array[i], i, array)){
+        resultingArray.push(array[i]);
+      }
+    }
+    return resultingArray;
+  };
+
+  tests({
+    "it should run the callback function array.length times": function() {
+        var counter = 0;
+        var amigo = filter([1,2,3],function(){
+          counter++;
+        });
+        eq(counter, 3);
+    },
+    "it should pass the ith element as the first element to the callback": function() {
+      filter([1],function(oi){
+        eq(oi,1)
+      });
+    },
+    "it should return the new array if the condition is called callback": function() {
+        var testingArray = [2,3];
+        var resultingArray = filter([1,2,3],function(amigo){
+          return amigo > 1;
+        });
+        console.log(resultingArray);
+        //console.log(Array.isArray(testingArray));
+        eq(resultingArray.length === 2, true);
+        eq(resultingArray[0] === 2, true);
+        eq(JSON.stringify(resultingArray) === JSON.stringify(testingArray), true)
+        //eq(resultingArray === testingArray, true); 
+    },
+    "it should pass in the ith position as the second argument of the callback": function(){
+      filter([1],function(number, index){
+        eq(index, 0);
+      });
+    },
+    "the array that foreach is being applied to as the third argument of the callback":function (){
+      var testArray = [1,2,3];
+      filter(testArray,function(number, index, thisArray){
+        eq(thisArray,testArray);
+      });
+    },
+    "it should accept a configurable this object": function(){
+      filter([1],function(){
+         eq(this.description,"configurable object") 
+      },{description: "configurable object"})
+    },
+    "it should return a new array, not the array being filtered": function(){
+      originalArray = [1,2,3]
+      newArray = filter(originalArray,function(amigo){
+        return true;
+      });
+      eq(originalArray !== newArray, true);
+    },
+    "it should return an array": function(){
+      newArray = filter([1,2,3],function(amigo){
+        return true;
+      });
+      eq(Array.isArray(newArray), true);
+    }
+  });
+</script>

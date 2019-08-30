@@ -1,0 +1,45 @@
+<script src="../tinytest.js"></script>
+<script src="adder.js"></script>
+<script>
+  function forEach(array, callback, thisConfObj) {
+    var confCallback = callback;
+    if (thisConfObj) {
+      confCallback = callback.bind(thisConfObj);
+    }
+    for (var i = 0; i < array.length; i++) {
+      confCallback(array[i], i, array);
+    }
+  };
+
+  tests({
+    "it should run the callback function array.length times": function() {
+      var counter = 0;
+      forEach([1,2,3], function(){
+        counter++;
+      });
+      eq(counter, 3);
+    },
+
+    "it should pass the ith element as the first element to the callback": function() {
+      forEach([1],function(oi){
+        eq(oi,1)
+      });
+    },
+    "it should pass in the ith position as the second argument of the callback": function(){
+      forEach([1],function(number, index){
+        eq(index, 0);
+      });
+    },
+    "the array that foreach is being applied to as the third argument of the callback":function (){
+      var testArray = [1,2,3];
+      forEach(testArray,function(number, index, thisArray){
+        eq(thisArray,testArray);
+      });
+    },
+    "it should accept a configurable this object": function(){
+      forEach([1],function(){
+         eq(this.description,"configurable object") 
+      },{description: "configurable object"})
+    }
+  });
+</script>
