@@ -5,14 +5,19 @@
     //    if (typeof initialValue === 'undefined') {
     //      initialValue = array[0]
     //    };
+    startingIndex = 0;
+    if ( arguments.length < 3 ) {
+      startingIndex++;
+    }
+    
     var finalResult = initialValue;
-    for (var i = 0; i < array.length; i++) {
-      if (i in array) {
+    for (var i = startingIndex; i < array.length; i++) {
         finalResult = callback(finalResult, array[i], i, array);
-      }
     }
     return finalResult;
   }
+
+  
 
   function sumUp(thisone, theother) {
     return thisone + theother;
@@ -20,19 +25,51 @@
   const numberedArray = [1, 2, 3, 4];
   const holedArray = [1, 3, , 4];
   const holedArray2 = [, 1, 3, , 4];
-  const singleArray = [1];
+  const singleArray = [3];
+  const doubleArray = [2,3];
   const weirdArray = [, 1, undefined];
   tests({
-    "If initialValue, previousValue should start with initialValue": function() {},
-    "If initialValue, currentValue should start with array[0]": function() {},
-    "If initialValue, callback will start at index 0": function() {},
-    "it no initialValue, previousValue should start with array[0]": function() {},
-    "it no initialValue, currentValue should start with array[1]": function() {},
-    "it no initialValue, callback will start at index 1 ": function() {},
-    "it initialValue, and array is empty, return initialValue without calling callback ": function() {},
-    "it no initialValue, and array has one element, it should return that element without calling callback ": function() {},
-    "it should actually reduce": function() {},
-    "it should exclude holes": function() {},
-    "it should pass array as fourth argument to callback": function() {}
+    "If initialValue, callback should run array.length times": function(){
+      var count = 0;
+      reduce(numberedArray,function(){
+        count++;
+      }, 0)
+      eq(count, numberedArray.length)
+    },
+    "If no initialValue, callback should run array.length -1 times": function(){
+      var count = 0;
+      reduce(numberedArray,function(){
+        count++;
+      })
+      eq(count, numberedArray.length - 1)
+    },
+    "If initialValue, previousValue should start with initialValue": function () { 
+      reduce(singleArray, function(previousValue){ 
+        eq(previousValue, 8);
+      }, 8)
+      
+     },
+    "If initialValue, currentValue should start with array[0]": function () {
+      reduce(singleArray, function(previousValue, currentValue){
+        eq(singleArray[0], currentValue);
+      }, 8)
+     },
+    "If initialValue, callback will start at index 0": function () { 
+      reduce(singleArray,function(previousValue, currentValue, currentIndex){
+        eq(currentIndex, 0);
+      },5)
+     },
+    "it no initialValue, previousValue should start with array[0]": function () { 
+      reduce(doubleArray,function(previousValue){
+        eq(previousValue,doubleArray[0]);
+      })
+     },
+    "it no initialValue, currentValue should start with array[1]": function () { fail(); },
+    "it no initialValue, callback will start at index 1 ": function () { fail(); },
+    "it initialValue, and array is empty, return initialValue without calling callback ": function () { fail(); },
+    "it no initialValue, and array has one element, it should return that element without calling callback ": function () { fail(); },
+    "it should actually reduce": function () { fail(); },
+    "it should exclude holes": function () { fail(); },
+    "it should pass array as fourth argument to callback": function () { fail(); }
   });
 </script>
