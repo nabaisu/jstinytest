@@ -1,75 +1,142 @@
-<script src="../tinytest.js"></script>
+<script src="../simpletest.js"></script>
 <script src="adder.js"></script>
 <script>
   function reduce(array, callback, initialValue) {
     //    if (typeof initialValue === 'undefined') {
     //      initialValue = array[0]
     //    };
-    startingIndex = 0;
-    if ( arguments.length < 3 ) {
-      startingIndex++;
-    }
-    
     var finalResult = initialValue;
-    for (var i = startingIndex; i < array.length; i++) {
+    startingIndex = 0;
+    var length = array.length;
+
+    if (arguments.length < 3) {
+      if (Object.keys(array).length === 1) {
+        return array[startingIndex];
+      } else if (Object.keys(array).length === 0) {
+        throw new TypeError('Reduce of empty array with no initial value');
+      } else {
+        while (startingIndex in array === false && startingIndex < length) {
+          startingIndex++;
+        }
+      }
+      finalResult = array[startingIndex]
+      startingIndex++;
+
+    }
+
+    //check if the array is empty
+    if (Object.keys(array).length === 0) {
+      return initialValue;
+    }
+
+    for (var i = startingIndex; i < length; i++) {
+      if (i in array) {
         finalResult = callback(finalResult, array[i], i, array);
+      }
     }
     return finalResult;
   }
 
-  
+
 
   function sumUp(thisone, theother) {
     return thisone + theother;
   }
   const numberedArray = [1, 2, 3, 4];
   const holedArray = [1, 3, , 4];
-  const holedArray2 = [, 1, 3, , 4];
+  const holedArray2 = [, , , , 1, 3, , 4];
   const singleArray = [3];
-  const doubleArray = [2,3];
+  const doubleArray = [2, 3];
   const weirdArray = [, 1, undefined];
+  const emptyArray = [, , ,]
   tests({
-    "If initialValue, callback should run array.length times": function(){
+    "If initialValue, callback should run array.length times": function () {
       var count = 0;
-      reduce(numberedArray,function(){
+      reduce(numberedArray, function () {
         count++;
       }, 0)
       eq(count, numberedArray.length)
     },
-    "If no initialValue, callback should run array.length -1 times": function(){
+    "If no initialValue, callback should run array.length -1 times": function () {
       var count = 0;
-      reduce(numberedArray,function(){
+      reduce(numberedArray, function () {
         count++;
       })
       eq(count, numberedArray.length - 1)
     },
-    "If initialValue, previousValue should start with initialValue": function () { 
-      reduce(singleArray, function(previousValue){ 
+    "If initialValue, previousValue should start with initialValue": function () {
+      reduce(singleArray, function (previousValue) {
         eq(previousValue, 8);
       }, 8)
-      
-     },
+
+    },
     "If initialValue, currentValue should start with array[0]": function () {
-      reduce(singleArray, function(previousValue, currentValue){
+      reduce(singleArray, function (previousValue, currentValue) {
         eq(singleArray[0], currentValue);
       }, 8)
-     },
-    "If initialValue, callback will start at index 0": function () { 
-      reduce(singleArray,function(previousValue, currentValue, currentIndex){
+    },
+    "If initialValue, callback will start at index 0": function () {
+      reduce(singleArray, function (previousValue, currentValue, currentIndex) {
         eq(currentIndex, 0);
-      },5)
-     },
-    "it no initialValue, previousValue should start with array[0]": function () { 
-      reduce(doubleArray,function(previousValue){
-        eq(previousValue,doubleArray[0]);
+      }, 5)
+    },
+    "if no initialValue, previousValue should start with array[0]": function () {
+      reduce(doubleArray, function (previousValue) {
+        eq(previousValue, doubleArray[0]);
       })
-     },
-    "it no initialValue, currentValue should start with array[1]": function () { fail(); },
-    "it no initialValue, callback will start at index 1 ": function () { fail(); },
-    "it initialValue, and array is empty, return initialValue without calling callback ": function () { fail(); },
-    "it no initialValue, and array has one element, it should return that element without calling callback ": function () { fail(); },
-    "it should actually reduce": function () { fail(); },
-    "it should exclude holes": function () { fail(); },
-    "it should pass array as fourth argument to callback": function () { fail(); }
+    },
+    "if no initialValue, currentValue should start with array[1]": function () {
+      reduce(doubleArray, function (previousValue, currentValue) {
+        eq(currentValue, doubleArray[1]);
+      })
+    },
+    "if no initialValue, callback will start at index 1 ": function () {
+      reduce(doubleArray, function (previousValue, currentValue, currentIndex) {
+        eq(currentIndex, 1);
+      })
+    },
+    "if initialValue, and array is empty, return initialValue without calling callback ": function () {
+      var count = 0;
+      var finalResult = reduce(emptyArray, function () {
+        count++;
+      }, 3)
+      eq(finalResult, 3)
+      eq(count, 0);
+    },
+    "if no initialValue, and array has one element, it should return that element without calling callback ": function () {
+      var count = 0;
+      var finalResult = reduce(singleArray, function () {
+        count++;
+      })
+      eq(finalResult, singleArray[0])
+      eq(count, 0);
+    },
+    "it should actually reduce": function () {
+      var finalResultNoInitialValue = reduce(numberedArray, sumUp);
+      var finalResultWithInitialValue = reduce(numberedArray, sumUp, 3);
+      eq(finalResultNoInitialValue, 10);
+      eq(finalResultWithInitialValue, 13);
+    },
+    "if initial value, it should exclude holes": function () {
+      var finalResultWithInitialValue = reduce(holedArray2, sumUp, 3);
+      eq(finalResultWithInitialValue, 11);
+    }, "if no initial value, it should exclude holes": function () {
+      var finalResultNoInitialValue = reduce(holedArray2, sumUp);
+      eq(finalResultNoInitialValue, 8);
+    },
+    "If array is empty and no initialValue, throw TypeError": function () {
+      var isTypeError = false;
+      try {
+        reduce(emptyArray, function () { })
+      } catch (e) {
+        isTypeError = (e instanceof TypeError);
+      }
+      eq(isTypeError, true);
+    },
+    "it should pass array as fourth argument to callback": function () {
+      reduce(weirdArray, function (previousValue, currentValue, currentIndex, array) {
+        eq(JSON.stringify(array), JSON.stringify(weirdArray));
+      })
+    }
   });
 </script>
