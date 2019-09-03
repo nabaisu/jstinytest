@@ -1,0 +1,177 @@
+<script src="../simpletest.js"></script>
+<script src="adder.js"></script>
+<script>
+  function reduceRight(array, callback, initialValue) {
+    var finalResult = initialValue;
+    var length = array.length - 1;
+    startingValue = length;
+
+    while(startingValue in array === false && startingValue > 0){
+      startingValue--;
+      finalResult = array[startingValue];
+    }
+
+    if (arguments.length < 3) {
+      if (Object.keys(array).length === 1) {
+        return array[length];
+      } else if (Object.keys(array).length === 0) {
+        throw new TypeError("ola");
+      } else {
+        finalResult = array[startingValue];
+        startingValue--;
+        
+      }
+    }
+    if (Object.keys(array).length === 0) return initialValue;
+
+
+
+    for (var i = startingValue; i >= 0; i--) {
+      if (i in array){
+        finalResult = callback(finalResult, array[i], i, array);
+      }
+    }
+    return finalResult;
+  }
+
+  function sumUp(a, b) {
+    return a + b;
+  }
+  const numberedArray = [1, 2, 3, 4];
+  const holedArray = [1, 3, , 4];
+  const holedArray2 = [, , , , 1, 3, , 4,,,];
+  const singleArray = [3];
+  const doubleArray = [2, 3];
+  const weirdArray = [, 1, undefined];
+  const emptyArray = [, , ,];
+  tests({
+    "1. If initialValue, callback should run array.length times": function() {
+      var count = 0;
+      reduceRight(
+        numberedArray,
+        function(teste) {
+          count++;
+        },
+        0
+      );
+      eq(count, numberedArray.length);
+    },
+    "2. If no initialValue, callback should run array.length -1 times": function() {
+      var count = 0;
+      reduceRight(numberedArray, function() {
+        count++;
+      });
+      eq(count, numberedArray.length - 1);
+    },
+    "3. If initialValue, previousValue should start with initialValue": function() {
+      reduceRight(
+        singleArray,
+        function(element) {
+          eq(element, 0);
+        },
+        0
+      );
+    },
+    "4. If initialValue, currentValue should start with array[length]": function() {
+      var finalResult = reduceRight(
+        singleArray,
+        function(element, currentElement) {
+          eq(currentElement, singleArray[length]);
+        },
+        8
+      );
+    },
+    "5. If initialValue, callback will start at index length": function() {
+      var finalResult = reduceRight(
+        singleArray,
+        function(element, currentElement, index) {
+          eq(index, 0);
+        },
+        3
+      );
+    },
+    "6. if no initialValue, previousValue should start with array[length]": function() {
+      var finalResult = reduceRight(doubleArray, function(element) {
+        eq(element, doubleArray[1]);
+      });
+    },
+    "7. if no initialValue, currentValue should start with array[length-1]": function() {
+      var finalResult = reduceRight(doubleArray, function(
+        element,
+        currentElement
+      ) {
+        eq(currentElement, doubleArray[0]);
+      });
+    },
+    "8. if no initialValue, callback will start at index length-1 ": function() {
+      var finalResult = reduceRight(doubleArray, function(
+        element,
+        currentElement,
+        index
+      ) {
+        eq(index, 0);
+      });
+    },
+    "9. if initialValue, and array is empty, return initialValue without calling callback ": function() {
+      var finalResult = reduceRight(
+        emptyArray,
+        function() {
+          fail("i ran");
+        },
+        3
+      );
+      eq(finalResult, 3);
+    },
+    "10. if no initialValue, and array has one element, it should return that element without calling callback ": function() {
+      var finalResult = reduceRight(singleArray, function() {
+        fail("i ran");
+      });
+      eq(finalResult, singleArray[0]);
+    },
+    "11. it should actually reduce": function() {
+      var finalResult = reduceRight(numberedArray, sumUp);
+      eq(finalResult, 10);
+      finalResult = reduceRight(numberedArray, sumUp, 10);
+      eq(finalResult, 20);
+    },
+    "12. if initial value, it should exclude holes": function() {
+      var finalResult = reduceRight(holedArray2, sumUp)
+      eq(finalResult,8);
+    },
+    "13. If array is empty and no initialValue, throw TypeError": function() {
+      var isTypeError = false;
+      try {
+        reduceRight(emptyArray, function () { })
+      } catch (e) {
+        isTypeError = (e instanceof TypeError);
+      }
+      eq(isTypeError, true);
+    },
+    "14. it should pass array as fourth argument to callback": function() {
+      reduceRight(weirdArray, function(primeiro, segundo, terceiro, quarto) {
+        eq(quarto, weirdArray);
+      });
+    }
+  });
+
+  /*
+If initialValue was provided in the call to reduceRight, then accumulator will be equal to initialValue
+If initialValue was provided in the call to reduceRight, then currentValue will be equal to the last value in the array.
+If initialValue is provided but the array is empty, the solo value would be returned without calling callback.
+
+If no initialValue was provided, then accumulator will be equal to the last value in the array
+If no initialValue was provided, then currentValue will be equal to the second-to-last value.
+If no initialValue was provided and the array has only one element (regardless of position) the solo value would be returned without calling callback.
+If no initialValue was provided, TypeError would be thrown, the array is empty 
+
+the callback function should be executed once for each element present in the array
+it should exclude holes in the array
+
+callback argument 1: the initial value (or value from the previous callback call)
+callback argument 2: the value of the current element
+callback argument 3: the current index
+callback argument 4: the array over which iteration is occurring.
+
+It should actually reduce
+*/
+</script>
