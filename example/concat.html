@@ -1,17 +1,27 @@
 <script src="../simpletest.js"></script>
 <script>
-  function concat(...args) {
+  function concat() {
     var newArray = [];
+    var args = arguments;
     var newArrayIndex = 0;
     //loop over the arrays
     for (var i = 0 ; i < args.length; i++){
+
+      //check if its an object
+      if (args[i].toString() === '[object Object]') {
+        newArray[newArrayIndex] = args[i]
+        newArrayIndex++;
+      } else {
       for (var j = 0; j < args[i].length; j++){
         newArray[newArrayIndex] = args[i][j];
         newArrayIndex++;
       }
+      }
     }
     return newArray;
   };
+
+
   var finalResult;
   var numberOfTimesCallbackRan;
   const numberedArray = [1, [2,9], 3, 4];
@@ -37,7 +47,6 @@
     },
     "4. it should not recurse into nested array arguments": function(){
       var newArray = concat(emptyArray, weirdArray);
-      console.log(newArray);
       eq(JSON.stringify(newArray),JSON.stringify(emptyArray.concat(weirdArray)))
     },
     "5. it should not alter this":function (){
@@ -49,11 +58,12 @@
       var newArray = concat(numberedArray, holedArray,'a');
       eq(JSON.stringify(newArray),JSON.stringify(numberedArray.concat(holedArray,'a')))
     },
-    "7. it should copy an object itself (update object after results on update of both objects) (same for arrays)": function(){
+    "7. it should copy an object itself (update object after results on update of both objects)": function(){
       var a = {teacher:'gordon'};
       var newArray = concat(numberedArray,'a', a, "b");
+      var trueConcatArray = numberedArray.concat('a', a, "b");
       a.teacher = 'me';
-      console.log(newArray);
+      eq(JSON.stringify(newArray) , JSON.stringify(trueConcatArray))
     }
 
 /*
@@ -64,7 +74,6 @@ it should not recurse into nested array arguments
 it should not alter this
 it should return a shallow copy that contains copies of the arrays
 it should copy an object itself (update object after results on update of both objects) (same for arrays)
-
 */
 
   });
