@@ -1,0 +1,94 @@
+<script src="../simpletest.js"></script>
+<script>
+  function slice(array, begin, end) {
+    length = array.length;
+    newArray = [];
+    newArrayIndex = 0;
+    if (arguments.length < 2) {
+      begin = 0;
+      end = length;
+    } else if (arguments.length < 3) {
+      end = length;
+    }
+                if (begin < 0) {
+                  begin = length + begin;
+                }
+                if (end < 0){
+                  end = length + end;
+                }
+    if (begin === undefined) {
+      begin = 0;
+    } else if (begin > length){return newArray;}
+    if (end > length) {
+      end = length;
+    }
+
+    for (i = begin; i < end; i++) {
+      newArray[newArrayIndex] = array[i];
+      newArrayIndex++;
+    }
+    return newArray;
+  }
+  var finalResult;
+  const holedArray = [, 1, , , 1, 3, 0, 4];
+
+  tests({
+    "1. arguments: array : it should expext an array, otherwise throw error": function() {
+      var isError = false;
+      try {
+        slice(singleLetter, singleLetter);
+        fail();
+      } catch (e) {
+        var isError = true;
+      }
+      eq(isError, true);
+    },
+    "2. arguments: begin : if should give an offset from the beggining of the array ": function() {
+      finalResult = slice(holedArray, 1);
+      eq(JSON.stringify(finalResult) , JSON.stringify(holedArray.slice(1)));
+    },
+    "3. arguments: end : if should give an offset from the end of the array ": function() {
+      finalResult = slice(holedArray, 1,3);
+      eq(JSON.stringify(finalResult), JSON.stringify(holedArray.slice(1,3)));
+    },
+    "4. if no arguments, whole array should be copied": function() {
+
+      finalResult = slice(holedArray);
+      eq(JSON.stringify(finalResult), JSON.stringify(holedArray.slice()));
+    },
+    "5. it should return a copy of the array.": function() {
+
+      finalResult = slice(holedArray);
+      eq(finalResult === holedArray, false);
+    },
+    "6. if begin < 0, it should get offset from the end": function() {
+
+      finalResult = slice(holedArray, -3);
+      eq(JSON.stringify(finalResult), JSON.stringify(holedArray.slice(-3)));
+    },
+    "7. if end < 0, it should give offset from the end": function() {
+
+      finalResult = slice(holedArray, 0, -2);
+      eq(JSON.stringify(finalResult),JSON.stringify(holedArray.slice(0,-2)) );
+    },
+    "8. if end > length, it should be set to length": function() {
+
+      finalResult = slice(holedArray, 0,9);
+      eq(JSON.stringify(finalResult),JSON.stringify(holedArray.slice(0,9)) );
+    },
+    "9. if beggining = undefined => begin = 0": function() {
+
+      finalResult = slice(holedArray, undefined, 4);
+      eq(JSON.stringify(finalResult),JSON.stringify(holedArray.slice(undefined,4)) );
+    }, 
+    "10. if beggining > length => return []": function() {
+
+      finalResult = slice(holedArray, 9);
+      eq(JSON.stringify(finalResult),JSON.stringify(holedArray.slice(9)) );
+    }
+
+    /*
+
+*/
+  });
+</script>

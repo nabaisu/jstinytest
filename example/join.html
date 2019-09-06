@@ -1,0 +1,101 @@
+<script src="../simpletest.js"></script>
+<script>
+  function join(array, separator) {
+    var arrayToChange = [...array]
+    length = arrayToChange.length;
+    if (length === 0) { return ''} else if ( length === 1 ){
+      if (array[0] === undefined || array[0] === null) {
+        return ''
+      } else { return array[0]}
+    }
+    if (arguments.length < 2){
+      separator = ',';
+    }
+    separator = (separator).toString();
+    var finalResult = ''
+    
+
+    for (i = 0; i < length ; i++){
+//      if (toString.call(array[i]) === '[object Object]') {
+  ///var value = array[i]
+  if (arrayToChange[i] === undefined || arrayToChange[i] === null || i in arrayToChange === false) {
+    arrayToChange[i] = ''
+  }
+      if (i === length - 1) {
+        //for last result (separator in the end)
+        finalResult = (finalResult + arrayToChange[i])
+      } else {
+        finalResult = (finalResult + arrayToChange[i] + separator)
+      }
+    }
+    return finalResult;
+  }
+  var finalResult;
+  const completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4];
+
+  tests({
+    "1. arguments: array : it should expext an array, otherwise throw error": function() {
+      var isError = false;
+      try {
+        join(singleLetter, singleLetter);
+        fail();
+      } catch (e) {
+        var isError = true;
+      }
+      eq(isError, true);
+    },
+    "2. arguments: separator, it should join the elements of the array with the separator between them ": function() {
+      finalResult = join(completeArray, 'a');
+      eq(finalResult , completeArray.join('a'));
+    },
+    "3. if array is empty, return empty string ": function() {
+      finalResult = join([],'a');
+      eq(finalResult, [].join('a'));
+    },
+    "4. if separator is empty, separator should be assigned to ',' ": function() {
+
+      finalResult = join(completeArray);
+      eq(finalResult, completeArray.join());
+      
+    },
+    "5. if length === 1 and undefined, return '' ": function() {
+
+      finalResult = join([undefined], 'a');
+      eq(finalResult , [undefined].join('a'));
+    },
+    "6. if length === 1 and null, return '' ": function() {
+
+      finalResult = join([null], 'a');
+      eq(finalResult, [null].join('a'));
+    },
+    "7. if length === 1 , return array[0] ": function() {
+
+      finalResult = join(['a'], 'b');
+      eq(finalResult, ['a'].join('b'));
+    },
+    "8. if object in array, set value to [object Object]": function() {
+
+      finalResult = join(completeArray, 'a');
+      eq(finalResult, completeArray.join('a'));
+    },
+    "9. if object in separator, set value to [object Object]": function() {
+
+      finalResult = join(completeArray, {amigo : 'bomdia'});
+      eq(finalResult, completeArray.join({amigo : 'bomdia'}));
+    }, 
+    "10. if array in separator, set the separator to string": function() {
+
+      finalResult = join(completeArray, [{ami:'a'},3,'ola']);
+      eq(finalResult,completeArray.join([{ami:'a'},3,'ola']));
+    },
+    "11. it should not modify the original array" : function() {
+      var outroArray = [...completeArray]
+      finalResult = join(completeArray, '');
+      eq(JSON.stringify(completeArray),JSON.stringify(outroArray));
+    }
+
+    /*
+
+*/
+  });
+</script>

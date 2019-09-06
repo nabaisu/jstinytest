@@ -1,0 +1,82 @@
+<script src="../simpletest.js"></script>
+<script>
+  function push(array) {
+    length = array.length;
+    var globalIndex = length;
+    for (i = 1; i > arguments.length; i++){
+      array[globalIndex] = arguments[i]
+      globalIndex++;
+    }
+    return array.length;
+  }
+  var finalResult;
+  var simpleArray = [1,2,3]
+  var completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4];
+
+  tests({
+    "1. arguments: array : it should expext an array, otherwise throw error": function() {
+      var isError = false;
+      try {
+        push(singleLetter, singleLetter);
+        fail();
+      } catch (e) {
+        var isError = true;
+      }
+      eq(isError, true);
+    },
+    "2. arguments: elements, it should push the elements to the array into new indexes ": function() {
+      finalResult = push(completeArray, 'a');
+      eq(finalResult , completeArray.push('a'));
+      eq(JSON.stringify(simpleArray))
+    },
+    "3. if array is empty, return empty string ": function() {
+      finalResult = push([],'a');
+      eq(finalResult, [].push('a'));
+    },
+    "4. if separator is empty, separator should be assigned to ',' ": function() {
+
+      finalResult = push(completeArray);
+      eq(finalResult, completeArray.push());
+      
+    },
+    "5. if length === 1 and undefined, return '' ": function() {
+
+      finalResult = push([undefined], 'a');
+      eq(finalResult , [undefined].push('a'));
+    },
+    "6. if length === 1 and null, return '' ": function() {
+
+      finalResult = push([null], 'a');
+      eq(finalResult, [null].push('a'));
+    },
+    "7. if length === 1 , return array[0] ": function() {
+
+      finalResult = push(['a'], 'b');
+      eq(finalResult, ['a'].push('b'));
+    },
+    "8. if object in array, set value to [object Object]": function() {
+
+      finalResult = push(completeArray, 'a');
+      eq(finalResult, completeArray.push('a'));
+    },
+    "9. if object in separator, set value to [object Object]": function() {
+
+      finalResult = push(completeArray, {amigo : 'bomdia'});
+      eq(finalResult, completeArray.push({amigo : 'bomdia'}));
+    }, 
+    "10. if array in separator, set the separator to string": function() {
+
+      finalResult = push(completeArray, [{ami:'a'},3,'ola']);
+      eq(finalResult,completeArray.push([{ami:'a'},3,'ola']));
+    },
+    "11. it should not modify the original array" : function() {
+      var outroArray = [...completeArray]
+      finalResult = push(completeArray, '');
+      eq(JSON.stringify(completeArray),JSON.stringify(outroArray));
+    }
+
+    /*
+
+*/
+  });
+</script>
