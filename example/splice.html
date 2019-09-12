@@ -3,32 +3,74 @@
   function splice(array, start, deleteCount) {
     var deletedElements = [];
     var length = array.length;
-    if (arguments.length < 2){
-      return deletedElements;
-    } 
+    var numberOfItems = arguments.length - 3;
+    var addMode = false;
 
-    if (start >= length){
-      start = length
+    if (arguments.length < 2) {
+      return deletedElements;
+    }
+
+    if (start >= length) {
+      start = length;
     } else if (Math.abs(start) > length) {
       start = 0;
     } else if (start < 0) {
-      start = length+start
+      start = length + start;
     }
 
-    if (deleteCount || deleteCount > array.length - start) {
+    //return empty array if there are no items given
+    if (deleteCount <= 0 && arguments.array < 4) {
+      return deleteCount;
+    }
+
+    //
+    if (deleteCount === undefined || deleteCount > array.length - start) {
       deleteCount = array.length;
     }
 
-    if (arguments.length < 3){
-      deleteCount = array.length - start
+    if (arguments.length < 3) {
+      deleteCount = array.length - start;
     }
     if (!Number.isInteger(deleteCount)) {
-      throw new TypeError = "the deleteCount must be an integer"
+      throw new TypeError("the deleteCount must be an integer");
     }
 
-for (i = start; i < start + deleteCount ; i++){
-  array[i] = item;
-}
+    if (deleteCount <= 0) {
+      addMode = true;
+    }
+
+    var j = 0;
+    // remove mode
+    if (!addMode) {
+      //this is remove mode
+      for (i = start; i < start + deleteCount; i++) {
+        //put them to the left
+        deletedElements.push(array[i]);
+        array[i] = array[i + deleteCount];
+      }
+
+      //remove the items to remove
+      for (i = 0; i < deleteCount; i++) {
+        array.length--;
+      }
+    }
+    //check if we should add or not
+    if (numberOfItems > 0) {
+      addMode = true;
+    }
+
+    if (addMode) {
+      length = array.length;
+      //this is add or change mode
+      for (i = length - 1 + numberOfItems; i > start; i--) {
+        array[i] = array[i - numberOfItems];
+      }
+      //add the ones that are needed now
+      for (i = start; i < start + numberOfItems; i++) {
+        array[i] = arguments[3 + j];
+        j++;
+      }
+    }
 
     return deletedElements;
 
@@ -36,39 +78,91 @@ for (i = start; i < start + deleteCount ; i++){
       var element = array[j];
       array[j] = array[i];
       array[i] = element;
-    }
-
+    };
   }
   var finalResult;
   const holedArray = [, 1, , , 1, 3, 0, 4];
 
   tests({
-    "1. If start >= array.length, start = array.length.": function() {
-      eq(JSON.stringify(reverse([1,2,3,4,5])),JSON.stringify([5,4,3,2,1]));
+    "1. Remove 0 (zero) elements from index 2, and insert 'drum'": function() {
+      var myFish = ["angel", "clown", "mandarin", "sturgeon"];
+      var removed = splice(myFish, 2, 0, "drum");
+      eq(JSON.stringify(removed), JSON.stringify([]));
+      eq(
+        JSON.stringify(["angel", "clown", "drum", "mandarin", "sturgeon"]),
+        JSON.stringify(myFish)
+      );
     },
-    "2. it should reverse the order of the pair": function() {
-      eq(JSON.stringify(reverse([1,2,3,4,5,6])),JSON.stringify([6,5,4,3,2,1]));
+    '2. Remove 0 (zero) elements from index 2, and insert "drum" and "guitar"': function() {
+      var myFish = ["angel", "clown", "mandarin", "sturgeon"];
+      var removed = splice(myFish, 2, 0, "drum", "guitar");
+      eq(JSON.stringify(removed), JSON.stringify([]));
+      eq(
+        JSON.stringify([
+          "angel",
+          "clown",
+          "drum",
+          "guitar",
+          "mandarin",
+          "sturgeon"
+        ]),
+        JSON.stringify(myFish)
+      );
     },
-    "3. it should save a reference to the old array ": function() {
-      oldArray = [1,2,3]
-      newArray = reverse(oldArray);
-      eq(JSON.stringify(oldArray), JSON.stringify(newArray));
+    "3. Remove 1 element from index 3": function() {
+      var myFish = ["angel", "clown", "drum", "mandarin", "sturgeon"];
+      var removed = splice(myFish, 3, 1);
+      eq(JSON.stringify(removed), JSON.stringify(["mandarin"]));
+      eq(
+        JSON.stringify(["angel", "clown", "drum", "sturgeon"]),
+        JSON.stringify(myFish)
+      );
     },
-    "4. it should update the array ": function() {
-      oldArray = [1,2,3]
-      newArray = reverse(oldArray);
-      eq(oldArray, newArray);
+    "4. Remove 1 element from index 2, and insert 'trumpet' ": function() {
+      var myFish = ["angel", "clown", "drum", "sturgeon"];
+      var removed = splice(myFish, 2, 1, "trumpet");
+      eq(JSON.stringify(removed), JSON.stringify(["drum"]));
+      eq(
+        JSON.stringify(["angel", "clown", "trumpet", "sturgeon"]),
+        JSON.stringify(myFish)
+      );
     },
-    "5. it should be callable from other functions": function() {
-      var a = {0: 1, 1: 2, 2: 3, length: 3};
-      var b = Array.prototype.reverse.call(a)
-      var a = {0: 1, 1: 2, 2: 3, length: 3};
-      var c = reverse(a);
-      eq(JSON.stringify(b), JSON.stringify(c));
+    "5. Remove 2 elements from index 0, and insert 'parrot', 'anemone' and 'blue'": function() {
+      var myFish = ["angel", "clown", "trumpet", "sturgeon"];
+      var removed = splice(myFish, 0, 2, "parrot", "anemone", "blue");
+      eq(JSON.stringify(removed), JSON.stringify(["angel", "clown"]));
+      eq(
+        JSON.stringify(["parrot", "anemone", "blue", "trumpet", "sturgeon"]),
+        JSON.stringify(myFish)
+      );
+    },
+    "6. Remove 2 elements from index 2": function() {
+      var myFish = ["parrot", "anemone", "blue", "trumpet", "sturgeon"];
+      var removed = splice(myFish, 2, 2);
+      eq(JSON.stringify(removed), JSON.stringify(["blue", "trumpet"]));
+      eq(
+        JSON.stringify(["parrot", "anemone", "sturgeon"]),
+        JSON.stringify(myFish)
+      );
+    },
+    "7. Remove 1 element from index -2": function() {
+      var myFish = ["angel", "clown", "mandarin", "sturgeon"];
+      var removed = splice(myFish, -2, 1);
+      eq(JSON.stringify(removed), JSON.stringify(["mandarin"]));
+      eq(
+        JSON.stringify(["angel", "clown", "sturgeon"]),
+        JSON.stringify(myFish)
+      );
+    },
+    "8. Remove all elements after index 2 (incl.)": function() {
+      var myFish = ["angel", "clown", "mandarin", "sturgeon"];
+      var removed = splice(myFish, 2);
+      eq(JSON.stringify(removed), JSON.stringify(["mandarin", "sturgeon"]));
+      eq(JSON.stringify(["angel", "clown"]), JSON.stringify(myFish));
     }
 
     /*
 
-*/
+  */
   });
 </script>

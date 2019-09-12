@@ -3,8 +3,9 @@
   function push(array) {
     length = array.length;
     var globalIndex = length;
-    for (i = 1; i > arguments.length; i++){
-      array[globalIndex] = arguments[i]
+    for (i = 1; i < arguments.length; i++){
+//      array.length++;
+      array[globalIndex] = arguments[i];
       globalIndex++;
     }
     return array.length;
@@ -24,59 +25,59 @@
       }
       eq(isError, true);
     },
-    "2. arguments: elements, it should push the elements to the array into new indexes ": function() {
+    "2. arguments: elements, it should push the elements to the array into new indexes to the end": function() {
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       finalResult = push(completeArray, 'a');
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       eq(finalResult , completeArray.push('a'));
-      eq(JSON.stringify(simpleArray))
     },
-    "3. if array is empty, return empty string ": function() {
+    "3. compare to the original one with empty array ": function() {
       finalResult = push([],'a');
       eq(finalResult, [].push('a'));
     },
-    "4. if separator is empty, separator should be assigned to ',' ": function() {
-
+    "4. compare to the original one with empty as the input ": function() {
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       finalResult = push(completeArray);
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       eq(finalResult, completeArray.push());
       
     },
-    "5. if length === 1 and undefined, return '' ": function() {
+    "5. compare to the original one with undefined as the array ": function() {
 
       finalResult = push([undefined], 'a');
       eq(finalResult , [undefined].push('a'));
     },
-    "6. if length === 1 and null, return '' ": function() {
-
-      finalResult = push([null], 'a');
-      eq(finalResult, [null].push('a'));
+    "6. compare to the original one with null as the array ": function() {
+      eq(push([null], 'a'), [null].push('a'));
     },
-    "7. if length === 1 , return array[0] ": function() {
-
-      finalResult = push(['a'], 'b');
-      eq(finalResult, ['a'].push('b'));
+    "7. compare to the original for a simple array ": function() {
+      eq(push(['a'], 'b'), ['a'].push('b'));
     },
-    "8. if object in array, set value to [object Object]": function() {
-
+    "8. compare to the original one with undefined as the array ": function() {
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       finalResult = push(completeArray, 'a');
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       eq(finalResult, completeArray.push('a'));
     },
     "9. if object in separator, set value to [object Object]": function() {
-
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       finalResult = push(completeArray, {amigo : 'bomdia'});
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       eq(finalResult, completeArray.push({amigo : 'bomdia'}));
     }, 
-    "10. if array in separator, set the separator to string": function() {
-
+    "10. compare to the original one with weird and complexed array ": function() {
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       finalResult = push(completeArray, [{ami:'a'},3,'ola']);
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
       eq(finalResult,completeArray.push([{ami:'a'},3,'ola']));
     },
-    "11. it should not modify the original array" : function() {
-      var outroArray = [...completeArray]
-      finalResult = push(completeArray, '');
-      eq(JSON.stringify(completeArray),JSON.stringify(outroArray));
+    "11. it should modify the original array" : function() {
+      completeArray = [,[1,[3,4]], 1,{amigo : 'amigo'} , , 1, 'a', 0, 4]
+      var outroArray = completeArray
+      finalResult = push(completeArray, 'ola');
+      eq(JSON.stringify(completeArray) ,JSON.stringify(outroArray));
+      eq(completeArray ,outroArray);
     }
 
-    /*
-
-*/
   });
 </script>

@@ -5,7 +5,6 @@
     //TODO: get all of the empty and undefined values to the end of the array
     //TODO: get the callback function to run
 
-
     var length = array.length;
     var changedArray = [];
       for (var i = 0; i < length; i++) {
@@ -14,7 +13,9 @@
     if (arguments.length < 2) {
       callback = compareFunction;
     } else {
-      
+      console.warn("this function does not accept callbacks yet... sorry");
+      console.warn("But sorting your function still whitout looking at your function =)");
+      callback = compareFunction;
     }
 
     callback(changedArray);
@@ -28,7 +29,13 @@
           for (j = 0; j < length - 1; j++) {
             primeiro = changedArray[j];
             segundo = changedArray[j + 1];
-            if (primeiro.toString() > segundo.toString()) {
+            if ( primeiro === undefined || primeiro === null) {
+              //troca
+              changedArray[j] = segundo;
+              changedArray[j + 1] = primeiro;
+            } else if (segundo === undefined || segundo === null) {
+              //do nothing
+            } else if ( primeiro.toString() > segundo.toString()) {
               //troca
               changedArray[j] = segundo;
               changedArray[j + 1] = primeiro;
@@ -39,7 +46,13 @@
           for (k = 0; k < length - 1; k++) {
             primeiro = changedArray[k];
             segundo = changedArray[k + 1];
-            if (primeiro.toString() > segundo.toString()) {
+            if ( primeiro === undefined || primeiro === null) {
+              //troca
+              count++;
+            }
+            else if (segundo === undefined || segundo === null) {
+              //do nothing
+            } else if ( primeiro.toString() > segundo.toString()) {
               count++;
             }
           }
@@ -73,30 +86,28 @@
         JSON.stringify([3, 4, 1, 2, 5].sort()),
         JSON.stringify(sort([3, 4, 1, 2, 5]))
       );
+      
     },
     "2. it should sort from the given start": function() {
       eq(
         JSON.stringify(['March', 'Jan', 'Feb', 'Dec'].sort()),
         JSON.stringify(sort(['March', 'Jan', 'Feb', 'Dec']))
       );
+      
     },
     "3. it should sort from the start to the end if both given": function() {
       eq(
-        JSON.stringify([1, 30, 4, 21, 100000].sort()),
-        JSON.stringify(sort([1, 30, 4, 21, 100000]))
+        JSON.stringify([1, 30,,null,undefined,, 4, 21, 100000].sort()),
+        JSON.stringify(sort([1, 30,,null,undefined,, 4, 21, 100000]))
       );
+      
     },
     "4. it should just return an copy of the array if start = end": function() {
       eq(
-        JSON.stringify([1, 2, 3, 4, 5].sort()),
-        JSON.stringify(sort([1, 2, 3, 4, 5]))
+        JSON.stringify([1, ,2, 3, 4, 5].sort()),
+        JSON.stringify(sort([1, ,2, 3, 4, 5]))
       );
-    },
-    "5. it should return a copy if either start > end or start bigger than the length": function() {
-      eq(
-        JSON.stringify([].sort.call({ length: 5, 3: 1 }, 0, 3)),
-        JSON.stringify(sort({ length: 5, 3: 1 }, 0, 3))
-      );
+      
     }
   });
 </script>
