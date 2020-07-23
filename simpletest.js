@@ -96,6 +96,11 @@ var TinyTest = {
             throw new Error('assertStrictEquals() "' + expected + '" !== "' + actual + '"');
         }
     },
+    assertjson: function(expected, actual) {
+        if (JSON.stringify(expected) !== JSON.stringify(actual)) {
+            throw new Error('assertStrictEquals() "' + expected + '" !== "' + actual + '"');
+        }
+    },
 
 };
 
@@ -103,5 +108,6 @@ var fail               = TinyTest.fail.bind(TinyTest),
     assert             = TinyTest.assert.bind(TinyTest),
     assertEquals       = TinyTest.assertEquals.bind(TinyTest),
     eq                 = TinyTest.assertStrictEquals.bind(TinyTest), // alias for assertStrictEquals
+    jeq                = TinyTest.assertjson.bind(TinyTest), // alias for assertStrictEquals
     assertStrictEquals = TinyTest.assertStrictEquals.bind(TinyTest),
     tests              = TinyTest.run.bind(TinyTest);
